@@ -1,6 +1,7 @@
 import createHttpError from "http-errors"
 import jwt from "jsonwebtoken"
-import UserModel from "../routes/user/schema.js"
+import DevModel from "../routes/dev/schema.js"
+import EmployerModel from "../routes/employer/schema.js"
 
 export const JWTAuthenticate = async (user) => {
   // 1. given the user, it generates two tokens: accessToken and refreshToken
@@ -69,7 +70,33 @@ export const verifyRefreshTokenAndGenerateNewTokens =
       const payload = await verifyRefreshToken(currentRefreshToken)
 
       // 2. If token is valid, we shall check if it is the same as the one saved in db
-      const user = await UserModel.findById(payload._id)
+      const user = await DevModel.findById(payload._id)
+
+      if (!user)
+        throw new createHttpError(404, `User with id ${payload._id} not found!`)
+
+      if (user.refreshToken && user.refreshToken === currentRefreshToken) {
+        // 3. If everything is fine --> generate accessToken and refreshToken
+        const { accessToken, refreshToken } = await JWTAuthenticate(user)
+
+        // 4. Return tokens
+        return { accessToken, refreshToken }
+      } else {
+        throw new createHttpError(401, "Refresh token not valid!")
+      }
+    } catch (error) {
+      throw new createHttpError(401, "Refresh token expired or compromised!")
+    }
+  }
+
+export const verifyRefreshTokenAndGenerateNewTokensEmployer =
+  async currentRefreshToken => {
+    try {
+      // 1. Check the validity of the current refresh token (exp date and integrity)
+      const payload = await verifyRefreshToken(currentRefreshToken)
+
+      // 2. If token is valid, we shall check if it is the same as the one saved in db
+      const user = await EmployerModel.findById(payload._id)
 
       if (!user)
         throw new createHttpError(404, `User with id ${payload._id} not found!`)
