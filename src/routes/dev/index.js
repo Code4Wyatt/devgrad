@@ -24,8 +24,9 @@ devRouter.get("/currentUser/:email", JWTAuthMiddleware, async (req, res, next) =
 
 devRouter.get("/:id", async (req, res, next) => {
     try {
-        const dev = await DevModel.findById(req.params.id)
-        const { password, updatedAt, ...other } = dev._doc
+        const developer = await DevModel.findById(req.params.id)
+        const { password, updatedAt, ...other } = developer._doc
+        res.status(200).send({ developer })
     } catch (error) {
         res.status(500).json(error)
     }

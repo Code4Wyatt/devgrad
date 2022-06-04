@@ -6,6 +6,7 @@ import listEndpoints from "express-list-endpoints"
 import { unauthorizedHandler, forbiddenHandler, catchAllHandler } from "./errorHandlers.js"
 import authRouter from "../src/routes/auth/index.js"
 import devRouter from "../src/routes/dev/index.js"
+import employerRouter from "../src/routes/employer/index.js"
 import "dotenv/config"
 
 const server = express()
@@ -19,6 +20,7 @@ server.use(express.json())
 // Routes
 server.use("/auth", authRouter)
 server.use("/developer", devRouter)
+server.use("/employer", employerRouter)
 
 // Error Handlers
 
