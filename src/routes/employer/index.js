@@ -11,9 +11,12 @@ const employerRouter = Router()
 
 employerRouter.get("/:id", async (req, res) => {
     try {
-        const employer = await EmployerModel(req.body.employerId)
+        const employer = await EmployerModel.findById(req.params.id)
+        const { companyName, contactName, companyLogo, contactEmail, ...other } = employer._doc;
         if (employer) {
-            res.status(200).send({ employer })
+            res.status(200).send(other)
+        } else {
+            res.status(500).send(error.message)
         }
     } catch (error) {
         res.status(500).send(error)
@@ -29,8 +32,9 @@ employerRouter.put("/:employerId/roles", JWTAuthMiddleware, async (req, res, nex
         
         if (!employer.rolesAvailable.includes(req.body.jobTitle)) {
             let role = new RoleModel(req.body)
+            const savedRole = await role.save()
             await employer.updateOne({ $push: { rolesAvailable: role }, new: true })
-            res.status(200).send(employer)
+            res.status(200).send(savedRole)
         } else {
             res.status(500).send(error)
         }
@@ -40,9 +44,31 @@ employerRouter.put("/:employerId/roles", JWTAuthMiddleware, async (req, res, nex
     }
 })
 
+// Get Employer Roles
+
+employerRouter.get("/:employerId/roles", async (req, res, next) => {
+    try {
+        const employer = await EmployerModel(req.body.employerId)
+        let roles = employer.rolesAvailable
+        if (employer) {
+            res.status(200).json( roles )
+        }
+    } catch (error) {
+        res.status(500).send(error.message)
+    }
+})
+
 // Edit Role
 
+employerRouter.put("/:employerId/roles/:id", JWTAuthMiddleware, async (req, res, next) => {
+    try {
+        const employer = await EmployerModel.findById(req.params.employerId)
+        const role = await RoleModel.findById(req.params.id)
 
+    } catch (error) {
+        res.status(500).send(error)
+    }
+})
 
 
 export default employerRouter
