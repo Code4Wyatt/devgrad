@@ -7,6 +7,7 @@ import { unauthorizedHandler, forbiddenHandler, catchAllHandler } from "./errorH
 import authRouter from "../src/routes/auth/index.js"
 import devRouter from "../src/routes/dev/index.js"
 import employerRouter from "../src/routes/employer/index.js"
+import rolesRouter from "../src/routes/roles/index.js"
 import "dotenv/config"
 
 const server = express()
@@ -21,6 +22,7 @@ server.use(express.json())
 server.use("/auth", authRouter)
 server.use("/developer", devRouter)
 server.use("/employer", employerRouter)
+server.use("/roles", rolesRouter)
 
 // Error Handlers
 

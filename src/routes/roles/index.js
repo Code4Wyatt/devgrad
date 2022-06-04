@@ -8,9 +8,9 @@ const roleRouter = Router()
 
 roleRouter.post("/role", async (req, res, next) => {
     try {
-        const role = await new RoleModel(req.body)
+        const role = new RoleModel(req.body)
         let { _id } = await role.save()
-        res.status(200).send({ _id })
+        res.status(200).send(role)
     } catch (error) {
         res.status(500).send(error)
     }

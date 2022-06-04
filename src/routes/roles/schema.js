@@ -13,4 +13,4 @@ const RoleSchema = new Schema({
     timestamps: true,
 })
 
-export default RoleSchema
+export default model("Role", RoleSchema)
