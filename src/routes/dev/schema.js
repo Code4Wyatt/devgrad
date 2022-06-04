@@ -10,6 +10,8 @@ const DevSchema = new Schema({
     password: { type: String, required: true, max: 30, unique: true },
     dateOfBirth: { type: Date, required: true },
     location: { type: String, required: true },
+    messages: { type: Array },
+    companiesFollowing: { type: Array, default: [] },
     profileImage: { type: String, default: "" },
     languages: { type: Array, default: [] },
     projects: { type: Array, default: [] },

@@ -87,5 +87,17 @@ employerRouter.put("/roles/:id", JWTAuthMiddleware, async (req, res, next) => {
     }
 })
 
+// Delete Role
+
+employerRouter.delete("/roles/:id", JWTAuthMiddleware, async (req, res) => {
+    try {
+      await RoleModel.findByIdAndDelete(req.params.id);
+      res.status(200).json("Role has been deleted successfully");
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+ 
+});
+
 
 export default employerRouter

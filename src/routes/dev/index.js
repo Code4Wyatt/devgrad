@@ -86,7 +86,7 @@ devRouter.put("/:id/follow", async (req, res, next) => {
       if (!dev.companiesFollowing.includes(req.body.companyId)) {
         await dev.updateOne({ $push: { companiesFollowing: req.body.companyId } });
         await company.updateOne({ $push: { devsFollowing: req.params.id } });
-        res.status(200).json("Developer has been followed the employer successfully");
+        res.status(200).send("Employer has been followed the employer successfully");
       } else {
         res.status(403).json("You are already following this employer");
       }
@@ -104,7 +104,7 @@ devRouter.put("/:id/unfollow", async (req, res) => {
   if (req.body.companyId !== req.params.id) {
     try {
       const dev = await DevModel.findById(req.params.id);
-      const company = await EmployerModel.findById(req.body.userId);
+      const company = await EmployerModel.findById(req.body.companyId);
       if (dev.companiesFollowing.includes(req.body.companyId)) {
         await dev.updateOne({ $pull: { companiesFollowing: req.body.companyId } });
         await company.updateOne({ $pull: { devsFollowing: req.params.id } });

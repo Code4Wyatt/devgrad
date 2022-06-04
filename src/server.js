@@ -1,28 +1,27 @@
+import "dotenv/config"
 import express from "express"
 import mongoose from "mongoose"
 import cors from "cors"
-import dotenv from "dotenv"
 import listEndpoints from "express-list-endpoints"
-import { unauthorizedHandler, forbiddenHandler, catchAllHandler } from "./errorHandlers.js"
 import authRouter from "../src/routes/auth/index.js"
 import devRouter from "../src/routes/dev/index.js"
 import employerRouter from "../src/routes/employer/index.js"
-import rolesRouter from "../src/routes/roles/index.js"
-import "dotenv/config"
+import { unauthorizedHandler, forbiddenHandler, catchAllHandler } from "./errorHandlers.js"
 
 const server = express()
 
 const port = process.env.PORT || 5050
 
 // Middlewares
+
 server.use(cors())
 server.use(express.json())
 
 // Routes
+
 server.use("/auth", authRouter)
 server.use("/developer", devRouter)
 server.use("/employer", employerRouter)
-server.use("/roles", rolesRouter)
 
 // Error Handlers
 
