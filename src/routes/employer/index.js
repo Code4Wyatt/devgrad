@@ -12,9 +12,9 @@ const employerRouter = Router()
 employerRouter.get("/:id", async (req, res) => {
     try {
         const employer = await EmployerModel.findById(req.params.id)
-        const { companyName, contactName, companyLogo, contactEmail, ...other } = employer._doc;
+        const { companyName, contactName, companyLogo, contactEmail, rolesAvailable, techStack, amountOfEmployees, headquartersLocation } = employer._doc;
         if (employer) {
-            res.status(200).send(other)
+            res.status(200).send({ companyName, contactName, companyLogo, contactEmail, rolesAvailable, techStack, amountOfEmployees, headquartersLocation })
         } else {
             res.status(500).send(error.message)
         }
@@ -58,13 +58,30 @@ employerRouter.get("/:employerId/roles", async (req, res, next) => {
     }
 })
 
+// Get Role
+
+employerRouter.get("/roles/:id", JWTAuthMiddleware, async (req, res, next) => {
+    try {
+        const role = await RoleModel.findOne({ id: req.params.id })
+        res.status(200).send({ role })
+    } catch (error) {
+        res.status(500).send(error)
+    }
+})
+
 // Edit Role
 
-employerRouter.put("/:employerId/roles/:id", JWTAuthMiddleware, async (req, res, next) => {
+employerRouter.put("/roles/:id", JWTAuthMiddleware, async (req, res, next) => {
     try {
-        const employer = await EmployerModel.findById(req.params.employerId)
-        const role = await RoleModel.findById(req.params.id)
-
+        const roleId = req.params.id;
+    const updatedRole = await RoleModel.findByIdAndUpdate(roleId, req.body, {
+      new: true,
+    }); // by default findByIdAndUpdate returns the document pre-update, if I want to retrieve the updated document, I should use new:true as an option
+    if (updatedRole) {
+      res.send(updatedRole);
+    } else {
+      next(createHttpError(404, `User with id ${roleId} not found!`));
+    }
     } catch (error) {
         res.status(500).send(error)
     }
