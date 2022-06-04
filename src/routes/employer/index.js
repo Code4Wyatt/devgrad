@@ -48,7 +48,7 @@ employerRouter.put("/:employerId/roles", JWTAuthMiddleware, async (req, res, nex
 
 employerRouter.get("/:employerId/roles", async (req, res, next) => {
     try {
-        const employer = await EmployerModel(req.body.employerId)
+        const employer = await EmployerModel.findById(req.params.employerId)
         let roles = employer.rolesAvailable
         if (employer) {
             res.status(200).json( roles )
