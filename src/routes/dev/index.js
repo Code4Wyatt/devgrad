@@ -19,6 +19,16 @@ devRouter.get("/currentUser/:email", JWTAuthMiddleware, async (req, res, next) =
   }
 });
 
+devRouter.get("/currentUser", JWTAuthMiddleware, async (req, res, next) => {
+  try {
+    let localUsername = typeof window !== 'undefined' ? localStorage.getItem('auth.email') : null
+    let currentUser = await DevModel.findOne({ email: localUsername });
+    res.status(200).send({currentUser});
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
+
 
 // Get Specific Developer
 
