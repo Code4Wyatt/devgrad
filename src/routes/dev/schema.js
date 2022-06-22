@@ -9,11 +9,7 @@ const DevSchema = new Schema({
     email: { type: String, required: true },
     password: { type: String, required: true, max: 30, unique: true },
     dateOfBirth: { type: Date },
-<<<<<<< Updated upstream
     location: { type: String },
-=======
-    location: { type: String},
->>>>>>> Stashed changes
     messages: { type: Array },
     companiesFollowing: { type: Array, default: [] },
     profileImage: { type: String, default: "" },

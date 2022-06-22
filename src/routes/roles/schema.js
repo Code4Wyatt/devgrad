@@ -7,8 +7,9 @@ const RoleSchema = new Schema({
     positionType: { type: String, required: true },
     location: { type: String, required: true },
     description: { type: String, required: true },
-    salary: { type: String, required: true },
-    applicants: { type: Array, default: [] }
+    techStack: [{ type: String, required: true }],
+    salary: { type: String },
+    applicants: { type: Array, default: [] },
 }, {
     timestamps: true,
 })
