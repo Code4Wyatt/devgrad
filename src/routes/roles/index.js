@@ -1,10 +1,22 @@
 import { Router } from "express"
-import DevModel from "./schema.js"
-import RoleModel from "../roles/schema.js"
-import EmployerModel from "./schema.js"
 import { JWTAuthMiddleware } from "../../auth/token.js"
 import createHttpError from "http-errors"
+import RoleModel from "./schema.js"
 
-const employerRouter = Router()
+const roleRouter = Router()
 
-export default employerRouter
+roleRouter.get("/", async (req, res) => {
+    try {
+        const roles = await RoleModel.find({});
+        if (roles) {
+            res.status(200).json({ roles });
+        }
+        console.log(roles);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+})
+
+
+
+export default roleRouter

@@ -6,6 +6,7 @@ import listEndpoints from "express-list-endpoints"
 import authRouter from "../src/routes/auth/index.js"
 import devRouter from "../src/routes/dev/index.js"
 import employerRouter from "../src/routes/employer/index.js"
+import roleRouter from "../src/routes/roles/index.js"
 import { unauthorizedHandler, forbiddenHandler, catchAllHandler } from "./errorHandlers.js"
 
 const server = express()
@@ -22,6 +23,7 @@ server.use(express.json())
 server.use("/auth", authRouter)
 server.use("/developer", devRouter)
 server.use("/employer", employerRouter)
+server.use("/roles", roleRouter)
 
 // Error Handlers
 
