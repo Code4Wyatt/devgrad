@@ -7,14 +7,27 @@ import createHttpError from "http-errors"
 
 const employerRouter = Router()
 
+// Get Employers
+
+employerRouter.get("/all", async (req, res) => {
+    try {
+        const employers = await EmployerModel.find({})
+        if (employers) {
+            res.status(200).send({ employers });
+        }
+    } catch (error) {
+        res.status(500).send(error)
+    }
+})
+
 // Get Employer
 
 employerRouter.get("/:id", async (req, res) => {
     try {
         const employer = await EmployerModel.findById(req.params.id)
-        const { companyName, contactName, companyLogo, contactEmail, rolesAvailable, techStack, amountOfEmployees, headquartersLocation } = employer._doc;
+        const { companyName, companyDescription, contactName, companyLogo, contactEmail, rolesAvailable, techStack, amountOfEmployees, headquartersLocation } = employer._doc;
         if (employer) {
-            res.status(200).send({ companyName, contactName, companyLogo, contactEmail, rolesAvailable, techStack, amountOfEmployees, headquartersLocation })
+            res.status(200).send({ companyName,companyDescription, contactName, companyLogo, contactEmail, rolesAvailable, techStack, amountOfEmployees, headquartersLocation })
         } else {
             res.status(500).send(error.message)
         }
