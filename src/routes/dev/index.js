@@ -29,6 +29,16 @@ devRouter.get("/currentUser", JWTAuthMiddleware, async (req, res, next) => {
   }
 });
 
+// Get All Developers
+
+devRouter.get("/all", async (req, res, next) => {
+    try {
+        const developers = await DevModel.find({})
+        res.status(200).send({ developers })
+    } catch (error) {
+        res.status(500).send(error)
+    }
+})
 
 // Get Specific Developer
 
