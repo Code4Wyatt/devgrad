@@ -14,7 +14,7 @@ const DevSchema = new Schema({
     messages: { type: Array },
     companiesFollowing: { type: Array, default: [] },
     profileImage: { type: String, default: "" },
-    languages: { type: Array, default: [] },
+    languages: { type: [String], default: [] },
     projects: { type: Array, default: [] },
     linkedIn: { type: String, default: "" },
     gitHub: { type: String, default: "" },

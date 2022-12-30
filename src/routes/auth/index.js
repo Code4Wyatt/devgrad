@@ -39,10 +39,13 @@ authRouter.post("/developer-login", async (req, res, next) => {
   try {
     // 1. Obtain credentials from req.body
     const { email, password } = req.body;
-
+    
     // 2. Verify credentials
     const dev = await DevModel.checkCredentials(email, password);
 
+    if (email === ' ') {
+      next(createHttpError(400, "Email blank!"));
+    }
     if (dev) {
       // 3. If credentials are fine we are going to generate an access token and send it as a response
       const { accessToken, refreshToken } = await JWTAuthenticate(dev);

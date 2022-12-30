@@ -1,5 +1,6 @@
 import "dotenv/config"
 import express from "express"
+import bodyParser from 'body-parser'
 import mongoose from "mongoose"
 import cors from "cors"
 import listEndpoints from "express-list-endpoints"
@@ -17,6 +18,7 @@ const port = process.env.PORT || 5050
 
 server.use(cors())
 server.use(express.json())
+server.use(bodyParser.json())
 
 // Routes
 

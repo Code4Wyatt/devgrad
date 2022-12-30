@@ -1,29 +1,34 @@
-import { Router } from "express"
-import DevModel from "./schema.js"
-import EmployerModel from "../employer/schema.js"
-import { JWTAuthMiddleware } from "../../auth/token.js"
-import createHttpError from "http-errors"
+import { Router } from "express";
+import DevModel from "./schema.js";
+import EmployerModel from "../employer/schema.js";
+import { JWTAuthMiddleware } from "../../auth/token.js";
+import createHttpError from "http-errors";
 
-const devRouter = Router()
+const devRouter = Router();
 
 // Get User On Log In
 
-devRouter.get("/currentUser/:email", JWTAuthMiddleware, async (req, res, next) => {
-  try {
-    const email = req.params.email
-    let currentUser = await DevModel.findOne({ email: email })
-      
-    res.status(200).send({ currentUser })
-  } catch (error) {
-    res.status(500).send({ error: error.message })
+devRouter.get(
+  "/currentUser/:email",
+  JWTAuthMiddleware,
+  async (req, res, next) => {
+    try {
+      const email = req.params.email;
+      let currentUser = await DevModel.findOne({ email: email });
+
+      res.status(200).send({ currentUser });
+    } catch (error) {
+      res.status(500).send({ error: error.message });
+    }
   }
-});
+);
 
 devRouter.get("/currentUser", JWTAuthMiddleware, async (req, res, next) => {
   try {
-    let localUsername = typeof window !== 'undefined' ? localStorage.getItem('auth.email') : null
+    let localUsername =
+      typeof window !== "undefined" ? localStorage.getItem("auth.email") : null;
     let currentUser = await DevModel.findOne({ email: localUsername });
-    res.status(200).send({currentUser});
+    res.status(200).send({ currentUser });
   } catch (error) {
     res.status(500).send({ error: error.message });
   }
@@ -32,25 +37,46 @@ devRouter.get("/currentUser", JWTAuthMiddleware, async (req, res, next) => {
 // Get All Developers
 
 devRouter.get("/all", async (req, res, next) => {
-    try {
-        const developers = await DevModel.find({})
-        res.status(200).send({ developers })
-    } catch (error) {
-        res.status(500).send(error)
-    }
-})
+  try {
+    const developers = await DevModel.find({});
+    res.status(200).send({ developers });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+// Developer Search
+
+devRouter.get("/search", async (req, res, next) => {
+  const filter = {};
+
+  if (req.query.statement) {
+    filter.statement = req.query.statement;
+  }
+
+  if (req.query.languages) {
+    filter.languages = req.query.languages;
+  }
+
+  try {
+    const developers = await DevModel.find({ location: req.query.location, languages: req.query.languages });
+    res.status(200).send({ developers });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
 
 // Get Specific Developer
 
 devRouter.get("/:id", async (req, res, next) => {
-    try {
-        const developer = await DevModel.findById(req.params.id)
-        const { password, updatedAt, ...other } = developer._doc
-        res.status(200).send({ developer })
-    } catch (error) {
-        res.status(500).json(error)
-    }
-})
+  try {
+    const developer = await DevModel.findById(req.params.id);
+    const { password, updatedAt, ...other } = developer._doc;
+    res.status(200).send({ developer });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
 
 // Edit Developer
 
@@ -63,7 +89,7 @@ devRouter.put("/:id", JWTAuthMiddleware, async (req, res, next) => {
     if (updatedDev) {
       res.send(updatedDev);
     } else {
-      next(createHttpError(404, `User with id ${ userId } not found!`));
+      next(createHttpError(404, `User with id ${userId} not found!`));
     }
   } catch (error) {
     next(error);
@@ -88,12 +114,12 @@ devRouter.delete("/remove/:id", async (req, res) => {
 // Delete Developer As Developer
 
 devRouter.delete("/delete/:id", JWTAuthMiddleware, async (req, res) => {
-    try {
-      await DevModel.findByIdAndDelete(req.params.id);
-      res.status(200).json("Account has been deleted successfully");
-    } catch (err) {
-      return res.status(500).json(err);
-    }
+  try {
+    await DevModel.findByIdAndDelete(req.params.id);
+    res.status(200).json("Account has been deleted successfully");
+  } catch (err) {
+    return res.status(500).json(err);
+  }
 });
 
 // Follow Employer
@@ -104,9 +130,13 @@ devRouter.put("/:id/follow", async (req, res, next) => {
       const dev = await DevModel.findById(req.params.id);
       const company = await EmployerModel.findById(req.body.companyId);
       if (!dev.companiesFollowing.includes(req.body.companyId)) {
-        await dev.updateOne({ $push: { companiesFollowing: req.body.companyId } });
+        await dev.updateOne({
+          $push: { companiesFollowing: req.body.companyId },
+        });
         await company.updateOne({ $push: { devsFollowing: req.params.id } });
-        res.status(200).send("Employer has been followed the employer successfully");
+        res
+          .status(200)
+          .send("Employer has been followed the employer successfully");
       } else {
         res.status(403).json("You are already following this employer");
       }
@@ -126,7 +156,9 @@ devRouter.put("/:id/unfollow", async (req, res) => {
       const dev = await DevModel.findById(req.params.id);
       const company = await EmployerModel.findById(req.body.companyId);
       if (dev.companiesFollowing.includes(req.body.companyId)) {
-        await dev.updateOne({ $pull: { companiesFollowing: req.body.companyId } });
+        await dev.updateOne({
+          $pull: { companiesFollowing: req.body.companyId },
+        });
         await company.updateOne({ $pull: { devsFollowing: req.params.id } });
         res.status(200).json("Employer has been unfollowed");
       } else {
@@ -140,4 +172,4 @@ devRouter.put("/:id/unfollow", async (req, res) => {
   }
 });
 
-export default devRouter
+export default devRouter;
