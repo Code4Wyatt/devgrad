@@ -48,18 +48,26 @@ devRouter.get("/all", async (req, res, next) => {
 // Developer Search
 
 devRouter.get("/search", async (req, res, next) => {
-  const filter = {};
+  const location = req.query.location;
+  const language = req.query.language;
+  const experienceLevel = req.query.experienceLevel;
 
-  if (req.query.statement) {
-    filter.statement = req.query.statement;
+  const query = {};
+
+  if (location) {
+    query.location = { $regex: req.query.location, $options: 'i' };
   }
 
-  if (req.query.languages) {
-    filter.languages = req.query.languages;
+  if (language) {
+    query.languages = language;
+  }
+
+  if (experienceLevel) {
+    query.experienceLevel = { $regex: req.query.experienceLevel, $options: 'i' };
   }
 
   try {
-    const developers = await DevModel.find({ location: req.query.location, languages: req.query.languages });
+    const developers = await DevModel.find(query);
     res.status(200).send({ developers });
   } catch (error) {
     res.status(500).send(error);
