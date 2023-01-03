@@ -63,7 +63,7 @@ devRouter.get("/search", async (req, res, next) => {
   }
 
   if (experienceLevel) {
-    query.experienceLevel = { $regex: req.query.experienceLevel, $options: 'i' };
+    query.experienceLevel =  req.query.experienceLevel;
   }
 
   try {
