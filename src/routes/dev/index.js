@@ -49,7 +49,7 @@ devRouter.get("/all", async (req, res, next) => {
 
 devRouter.get("/search", async (req, res, next) => {
   const location = req.query.location;
-  const language = req.query.language;
+  const languages = req.query.languages;
   const experienceLevel = req.query.experienceLevel;
 
   const query = {};
@@ -58,8 +58,8 @@ devRouter.get("/search", async (req, res, next) => {
     query.location = { $regex: req.query.location, $options: 'i' };
   }
 
-  if (language) {
-    query.languages = language;
+  if (languages) {
+    query.languages = { $regex: req.query.languages, $options: 'i' };
   }
 
   if (experienceLevel) {
@@ -93,7 +93,8 @@ devRouter.put("/:id", JWTAuthMiddleware, async (req, res, next) => {
     const userId = req.params.id;
     const updatedDev = await DevModel.findByIdAndUpdate(userId, req.body, {
       new: true,
-    }); // by default findByIdAndUpdate returns the document pre-update, if I want to retrieve the updated document, I should use new:true as an option
+    });
+    // by default findByIdAndUpdate returns the document pre-update, if I want to retrieve the updated document, I should use new:true as an option
     if (updatedDev) {
       res.send(updatedDev);
     } else {
