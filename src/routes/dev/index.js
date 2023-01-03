@@ -59,7 +59,7 @@ devRouter.get("/search", async (req, res, next) => {
   }
 
   if (languages) {
-    query.languages = { $regex: req.query.languages, $options: 'i' };
+    query.languages = req.query.languages;
   }
 
   if (experienceLevel) {
