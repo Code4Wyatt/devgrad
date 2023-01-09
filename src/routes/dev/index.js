@@ -79,10 +79,10 @@ devRouter.get("/search", async (req, res, next) => {
 devRouter.get("/:id", async (req, res, next) => {
   try {
     const developer = await DevModel.findById(req.params.id);
-    const { password, updatedAt, ...other } = developer._doc;
-    res.status(200).send({ developer });
+    const { firstName, email, ...other } = developer._doc;
+    res.status(200).send(developer);
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).send(error);
   }
 });
 
@@ -104,6 +104,22 @@ devRouter.put("/:id", JWTAuthMiddleware, async (req, res, next) => {
     next(error);
   }
 });
+
+// Add Project to Developer
+
+devRouter.post('/:id/addproject', JWTAuthMiddleware, async (req, res, next) => {
+  try {
+    const user = await DevModel.findById(req.params.id);
+    // Add the new project to the user's list of projects
+    user.projects.push(req.body);
+    // Save the updated user to the database
+    await user.save();
+    // Send a response indicating that the project was added successfully
+    res.send({ message: 'Project added successfully' });
+  } catch (error) {
+     next(createHttpError(404, `User with id ${userId} not found!`));
+  }
+})
 
 // Delete Developer As Admin
 
